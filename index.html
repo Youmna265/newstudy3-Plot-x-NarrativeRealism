@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Random Survey Redirect</title>
+</head>
+<body>
+  <p>Redirecting you to the survey…
+    If nothing happens, <a id="fallback" href="#">click here</a>.
+    <noscript>
+      <!-- JS disabled fallback: send to any one form (or list all 4 as links) -->
+      <br>JavaScript is off. Please use one of these:
+      <ul>
+        <li><a href="https://forms.gle/oyryyUjp52wtCaxn9">Variant 1</a></li>
+        <li><a href="https://forms.gle/9m83kLqQqVv6YsbeA">Variant 2</a></li>
+        <li><a href="https://forms.gle/W8xAjbEyh2MmXpLm6">Variant 3</a></li>
+        <li><a href="https://forms.gle/JammLdS5P9NHCiSg7">Variant 4</a></li>
+      </ul>
+    </noscript>
+  </p>
+
+  <script>
+    (function () {
+      const surveys = [
+        "https://forms.gle/oyryyUjp52wtCaxn9", // Adv x Realism
+        "https://forms.gle/9m83kLqQqVv6YsbeA", // Transf x Realism
+        "https://forms.gle/W8xAjbEyh2MmXpLm6", // Adv x Fantasy
+        "https://forms.gle/JammLdS5P9NHCiSg7"  // Transf x Fantasy 
+      ];
+
+      // Stronger randomness when available
+      const rand32 = (window.crypto && window.crypto.getRandomValues)
+        ? window.crypto.getRandomValues(new Uint32Array(1))[0]
+        : Math.floor(Math.random() * 0xFFFFFFFF);
+
+      const i = rand32 % surveys.length;
+
+      // Optional: tag the variant so you can verify distribution inside Forms
+      const target = surveys[i] + (surveys[i].includes('?') ? '&' : '?') + 'variant=' + (i + 1);
+
+      // Make the visible fallback link match the chosen variant
+      const fallback = document.getElementById('fallback');
+      if (fallback) fallback.href = target;
+
+      // Redirect quickly; replace avoids a "back" to the hub page
+      try { location.replace(target); } catch (_) { location.href = target; }
+      // Extra safety: force navigation if replace is blocked
+      setTimeout(() => { location.href = target; }, 500);
+    })();
+  </script>
+</body>
+</html>
